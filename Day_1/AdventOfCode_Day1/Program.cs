@@ -10,73 +10,33 @@ namespace AdventOfCode_Day1
     {
         public int X;
         public int Y;
-
-        public Position() {}
-
-        public Position(Position pos)
-        {
-            X = pos.X;
-            Y = pos.Y;
-        }
     }
 
-    class Bunny
+    class Player
     {
         public List<Position> history = new List<Position>();
         public Position position = new Position();
 
         public void Move(int direction, int count)
         {
-            switch (direction)
-            {
-                case 0: // North
-                    MoveNorth(count);
-                    break;
-                case 1: // West
-                    MoveWest(count);
-                    break;
-                case 2: // South
-                    MoveSouth(count);
-                    break;
-                case 3: // East
-                    MoveEast(count);
-                    break;
-            }
-        }
-
-        private void MoveNorth(int count)
-        {
-            for(int i = 0; i < count; i++)
-            {
-                position.Y += 1;
-                history.Add(new Position(position));
-            }
-        }
-
-        private void MoveSouth(int count)
-        {
             for (int i = 0; i < count; i++)
             {
-                position.Y -= 1;
-                history.Add(new Position(position));
-            }
-        }
-
-        private void MoveEast(int count)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                position.X += 1;
-                history.Add(new Position(position));
-            }
-        }
-
-        private void MoveWest(int count)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                position.X -= 1;
-                history.Add(new Position(position));
+                switch (direction)
+                {
+                    case 0: // North
+                        position.Y += 1;
+                        break;
+                    case 1: // West
+                        position.X -= 1;
+                        break;
+                    case 2: // South
+                        position.Y -= 1;
+                        break;
+                    case 3: // East
+                        position.X += 1;
+                        break;
+                }
+                history.Add(new Position { X = position.X, Y = position.Y });
             }
         }
     }
@@ -92,7 +52,7 @@ namespace AdventOfCode_Day1
 
             bool isFirstLocationHitTwiceFound= false;
             Position posHitTwice = new Position();
-            Bunny player = new Bunny();
+            Player player = new Player();
 
             foreach (string oneInput in splitInputs)
             {
