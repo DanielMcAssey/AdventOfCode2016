@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AdventOfCode_Day1
 {
@@ -50,7 +47,7 @@ namespace AdventOfCode_Day1
             string[] splitInputs = GAME_INPUT.Replace(" ", "").Split(',');
             int compassDirection = 0; // 0 - North, 1 - West, 2 - South, 3 - East
 
-            bool isFirstLocationHitTwiceFound= false;
+            bool isFirstLocationHitTwiceFound = false;
             Position posHitTwice = new Position();
             Player player = new Player();
 
@@ -72,9 +69,9 @@ namespace AdventOfCode_Day1
                 player.Move(compassDirection, moveCount);
             }
 
-            for(int i = 0; i < player.history.Count; i++)
+            for (int i = 0; i < player.history.Count; i++)
             {
-                for(int j = 0; j < player.history.Count; j++)
+                for (int j = 0; j < player.history.Count; j++)
                 {
                     if (i != j && player.history[i].X == player.history[j].X && player.history[i].Y == player.history[j].Y)
                     {
