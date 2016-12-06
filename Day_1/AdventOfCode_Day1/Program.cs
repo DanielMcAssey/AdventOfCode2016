@@ -6,81 +6,136 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode_Day1
 {
-	struct Postiion
-	{
-		public int X;
-		public int Y;
-	}
+    class Position
+    {
+        public int X;
+        public int Y;
 
-	class Program
-	{
-		private const string input = "L2, L3, L3, L4, R1, R2, L3, R3, R3, L1, L3, R2, R3, L3, R4, R3, R3, L1, L4, R4, L2, R5, R1, L5, R1, R3, L5, R2, L2, R2, R1, L1, L3, L3, R4, R5, R4, L1, L189, L2, R2, L5, R5, R45, L3, R4, R77, L1, R1, R194, R2, L5, L3, L2, L1, R5, L3, L3, L5, L5, L5, R2, L1, L2, L3, R2, R5, R4, L2, R3, R5, L2, L2, R3, L3, L2, L1, L3, R5, R4, R3, R2, L1, R2, L5, R4, L5, L4, R4, L2, R5, L3, L2, R4, L1, L2, R2, R3, L2, L5, R1, R1, R3, R4, R1, R2, R4, R5, L3, L5, L3, L3, R5, R4, R1, L3, R1, L3, R3, R3, R3, L1, R3, R4, L5, L3, L1, L5, L4, R4, R1, L4, R3, R3, R5, R4, R3, R3, L1, L2, R1, L4, L4, L3, L4, L3, L5, R2, R4, L2";
+        public Position() {}
 
-		static void Main(string[] args)
-		{
-			string[] splitInputs = input.Replace(" ", "").Split(',');
-			int startX = 0;
-			int startY = 0;
-			int currentDirection = 0; // 0 - North, 1 - West, 2 - South, 3 - East
-			bool firstLocationVisitedTwice = false;
-			int positionTwiceX = 0;
-			int positionTwiceY = 0;
-			List<Postiion> positions = new List<Postiion>();
+        public Position(Position pos)
+        {
+            X = pos.X;
+            Y = pos.Y;
+        }
+    }
 
-			foreach(string oneInput in splitInputs)
-			{
-				char direction = oneInput[0];
-				int moveCount = int.Parse(oneInput.Remove(0, 1));
+    class Bunny
+    {
+        public List<Position> history = new List<Position>();
+        public Position position = new Position();
 
-				switch(direction)
-				{
-					case 'L':
-						currentDirection = (currentDirection - 1 < 0) ? 3 : currentDirection - 1;
-						break;
-					case 'R':
-						currentDirection = (currentDirection + 1 > 3) ? 0 : currentDirection + 1;
-						break;
-				}
+        public void Move(int direction, int count)
+        {
+            switch (direction)
+            {
+                case 0: // North
+                    MoveNorth(count);
+                    break;
+                case 1: // West
+                    MoveWest(count);
+                    break;
+                case 2: // South
+                    MoveSouth(count);
+                    break;
+                case 3: // East
+                    MoveEast(count);
+                    break;
+            }
+        }
 
-				switch (currentDirection)
-				{
-					case 0: // North
-						startY += moveCount;
-						break;
-					case 1: // West
-						startX += moveCount;
-						break;
-					case 2: // South
-						startY -= moveCount;
-						break;
-					case 3: // East
-						startX -= moveCount;
-						break;
-				}
+        private void MoveNorth(int count)
+        {
+            for(int i = 0; i < count; i++)
+            {
+                position.Y += 1;
+                history.Add(new Position(position));
+            }
+        }
 
-				if(!firstLocationVisitedTwice)
-				{
-					foreach (Postiion pos in positions)
-					{
-						if (startX == pos.X && startY == pos.Y)
-						{
-							Console.WriteLine("X: " + pos.X + " Y: " + pos.Y);
-							firstLocationVisitedTwice = true;
-							positionTwiceX = startX;
-							positionTwiceY = startY;
-						}
-					}
+        private void MoveSouth(int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                position.Y -= 1;
+                history.Add(new Position(position));
+            }
+        }
 
-					positions.Add(new Postiion { X = startX, Y = startY });
-				}
-			}
+        private void MoveEast(int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                position.X += 1;
+                history.Add(new Position(position));
+            }
+        }
 
-			int distance = Math.Abs(startX + startY);
-			Console.WriteLine("Distance: " + distance);
+        private void MoveWest(int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                position.X -= 1;
+                history.Add(new Position(position));
+            }
+        }
+    }
 
-			int distanceToFirstLocationTwice = Math.Abs(positionTwiceX + positionTwiceY);
-			Console.WriteLine("Distance to first location twice: " + distanceToFirstLocationTwice);
-			Console.ReadKey();
-		}
-	}
+    class Program
+    {
+        private const string GAME_INPUT = "L2, L3, L3, L4, R1, R2, L3, R3, R3, L1, L3, R2, R3, L3, R4, R3, R3, L1, L4, R4, L2, R5, R1, L5, R1, R3, L5, R2, L2, R2, R1, L1, L3, L3, R4, R5, R4, L1, L189, L2, R2, L5, R5, R45, L3, R4, R77, L1, R1, R194, R2, L5, L3, L2, L1, R5, L3, L3, L5, L5, L5, R2, L1, L2, L3, R2, R5, R4, L2, R3, R5, L2, L2, R3, L3, L2, L1, L3, R5, R4, R3, R2, L1, R2, L5, R4, L5, L4, R4, L2, R5, L3, L2, R4, L1, L2, R2, R3, L2, L5, R1, R1, R3, R4, R1, R2, R4, R5, L3, L5, L3, L3, R5, R4, R1, L3, R1, L3, R3, R3, R3, L1, R3, R4, L5, L3, L1, L5, L4, R4, R1, L4, R3, R3, R5, R4, R3, R3, L1, L2, R1, L4, L4, L3, L4, L3, L5, R2, R4, L2";
+
+        static void Main(string[] args)
+        {
+            string[] splitInputs = GAME_INPUT.Replace(" ", "").Split(',');
+            int compassDirection = 0; // 0 - North, 1 - West, 2 - South, 3 - East
+
+            bool isFirstLocationHitTwiceFound= false;
+            Position posHitTwice = new Position();
+            Bunny player = new Bunny();
+
+            foreach (string oneInput in splitInputs)
+            {
+                char direction = oneInput[0];
+                int moveCount = int.Parse(oneInput.Remove(0, 1));
+
+                switch (direction)
+                {
+                    case 'L':
+                        compassDirection = (compassDirection - 1 < 0) ? 3 : compassDirection - 1;
+                        break;
+                    case 'R':
+                        compassDirection = (compassDirection + 1 > 3) ? 0 : compassDirection + 1;
+                        break;
+                }
+
+                player.Move(compassDirection, moveCount);
+            }
+
+            for(int i = 0; i < player.history.Count; i++)
+            {
+                for(int j = 0; j < player.history.Count; j++)
+                {
+                    if (i != j && player.history[i].X == player.history[j].X && player.history[i].Y == player.history[j].Y)
+                    {
+                        isFirstLocationHitTwiceFound = true;
+                        posHitTwice = player.history[i];
+                        break;
+                    }
+
+                    if (isFirstLocationHitTwiceFound)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            int distance = Math.Abs(player.position.X) + Math.Abs(player.position.Y);
+            Console.WriteLine("Distance: " + distance);
+
+            int distanceToFirstLocationHitTwice = Math.Abs(posHitTwice.X) + Math.Abs(posHitTwice.Y);
+            Console.WriteLine("Distance to first location hit twice: " + distanceToFirstLocationHitTwice);
+            Console.ReadKey();
+        }
+    }
 }
