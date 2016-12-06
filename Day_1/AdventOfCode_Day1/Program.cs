@@ -82,11 +82,11 @@ namespace AdventOfCode_Day1
                         posHitTwice = player.history[i];
                         break;
                     }
+                }
 
-                    if (isFirstLocationHitTwiceFound)
-                    {
-                        break;
-                    }
+                if (isFirstLocationHitTwiceFound)
+                {
+                    break;
                 }
             }
 
